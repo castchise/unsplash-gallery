@@ -38,7 +38,7 @@ export default class ImageContainer extends React.Component {
       (window.scrollY / (this.getDocHeight() - window.innerHeight)) * 100
     );
 
-    if (pagePercentageScrolled > 80 && !this.state.loading) {
+    if (pagePercentageScrolled > 70 && !this.state.loading) {
       this.setState((prevState) => ({
         page: prevState.page + 1,
         loading: !prevState.loading
@@ -54,14 +54,20 @@ export default class ImageContainer extends React.Component {
       prevProps.sourceType === "local"
     ) {
       this.setState({ photosList: [] });
+      window.addEventListener("scroll", this.updateListOnScroll);
       await this.getUnsplashPhotos();
     } else if (
       this.props.sourceType === "local" &&
       prevProps.sourceType === "unsplash"
     ) {
       this.setState({ photosList: [] });
+      window.removeEventListener("scroll", this.updateListOnScroll);
       this.getLocalPhotos();
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.updateListOnScroll);
   }
 
   getDocHeight = () => {
@@ -81,7 +87,7 @@ export default class ImageContainer extends React.Component {
     });
     const { response } = await unsplash.photos.list({
       page: this.state.page,
-      perPage: itemsCount || 15
+      perPage: itemsCount || 20
     });
     const updatedList = this.state.photosList.concat(
       this.removeAdPictures(response.results)
