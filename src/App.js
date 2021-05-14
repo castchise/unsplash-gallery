@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { clearLocalStorage } from "./utils/index";
 
 import ImageContainer from "./components/ImageContainer/image-container.component";
 import ImageDetails from "./pages/image-details.component";
@@ -20,6 +21,11 @@ export default class App extends React.Component {
     this.setState({ sourceType: current });
   };
 
+  clearLocalItems = (category) => {
+    clearLocalStorage(category);
+    this.setState({ sourceType: "unsplash" });
+  };
+
   render() {
     return (
       <div>
@@ -27,6 +33,7 @@ export default class App extends React.Component {
           <Header
             sourceType={this.state.sourceType}
             changeSourceType={this.changeSourceType}
+            clearLocalItems={this.clearLocalItems}
           />
           <main className="max-w-1200 mx-auto">
             <Switch>
